@@ -1,5 +1,5 @@
 {
-    "name": "aoepeople/composer-installers",
+    "name": "newtown/composer-installers",
     "type": "composer-installer",
     "license": "GPL",
     "description": "A simple composer installer",
@@ -10,6 +10,10 @@
         {
             "name": "Fabrizio Branca",
             "email": "{firstname}.{lastname}@aoe.com"
+        },
+        {
+            "name": "Ingo Fabbri",
+            "email": "if@newtown.at"
         }
     ],
     "autoload": {
