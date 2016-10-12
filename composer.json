@@ -1,28 +1,33 @@
 {
-    "name": "newtown/composer-installers",
-    "type": "composer-installer",
-    "license": "GPL",
-    "description": "A simple composer installer",
-    "keywords": [
-        "installer", "Magento", "modman"
-    ],
-    "authors": [
-        {
-            "name": "Fabrizio Branca",
-            "email": "{firstname}.{lastname}@aoe.com"
-        },
-        {
-            "name": "Ingo Fabbri",
-            "email": "if@newtown.at"
-        }
-    ],
-    "autoload": {
-        "psr-0": { "Aoepeople\\ComposerInstallers\\": "src/" }
+  "name": "newtown/composer-installers",
+  "type": "composer-installer",
+  "license": "GPL",
+  "description": "A simple composer installer",
+  "keywords": [
+    "installer",
+    "Magento",
+    "modman"
+  ],
+  "authors": [
+    {
+      "name": "Fabrizio Branca",
+      "email": "{firstname}.{lastname}@aoe.com"
     },
-    "extra": {
-        "class": "Aoepeople\\ComposerInstallers\\Installer"
-    },
-    "replace": {
-        "magento-hackathon/magento-composer-installer":"*"
+    {
+      "name": "Ingo Fabbri",
+      "email": "if@newtown.at"
     }
+  ],
+  "autoload": {
+    "psr-0": {
+      "Aoepeople\\ComposerInstallers\\": "src/",
+      "Newtown\\Composer\\": "src/"
+    }
+  },
+  "extra": {
+    "class": "Aoepeople\\ComposerInstallers\\Installer"
+  },
+  "replace": {
+    "magento-hackathon/magento-composer-installer": "*"
+  }
 }
