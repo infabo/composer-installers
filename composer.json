@@ -29,5 +29,8 @@
   },
   "replace": {
     "magento-hackathon/magento-composer-installer": "*"
+  },
+  "require": {
+    "colinmollenhour/modman": "dev-master"
   }
 }
