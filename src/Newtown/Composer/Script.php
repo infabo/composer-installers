@@ -37,11 +37,11 @@ class Script
     {
         /** @var UpdateOperation $operation */
         $operation = $event->getOperation();
-        $installedPackage = $operation->getTargetPackage();
+        $updatedPackage = $operation->getTargetPackage();
 
-        if ($installedPackage->getType() === 'magento-module') {
+        if ($updatedPackage->getType() === 'magento-module') {
             $processExecutor = new ProcessExecutor($event->getIO());
-            $processExecutor->execute(sprintf('modman deploy %s', static::getModmanName($installedPackage)));
+            $processExecutor->execute(sprintf('modman deploy %s', static::getModmanName($updatedPackage)));
         }
     }
 
@@ -49,11 +49,11 @@ class Script
     {
         /** @var UninstallOperation $operation */
         $operation = $event->getOperation();
-        $installedPackage = $operation->getPackage();
+        $uninstalledPackage = $operation->getPackage();
 
-        if ($installedPackage->getType() === 'magento-module') {
+        if ($uninstalledPackage->getType() === 'magento-module') {
             $processExecutor = new ProcessExecutor($event->getIO());
-            $processExecutor->execute(sprintf('modman undeploy %s', static::getModmanName($installedPackage)));
+            $processExecutor->execute(sprintf('modman undeploy %s', static::getModmanName($uninstalledPackage)));
         }
     }
 
