@@ -5,6 +5,7 @@ namespace Newtown\Composer;
 use Composer\DependencyResolver\Operation\InstallOperation;
 use Composer\DependencyResolver\Operation\UninstallOperation;
 use Composer\DependencyResolver\Operation\UpdateOperation;
+use Composer\Package\PackageInterface;
 use Composer\Script\Event;
 use Composer\Installer\PackageEvent;
 use Composer\Util\ProcessExecutor;
@@ -28,7 +29,7 @@ class Script
 
         if ($installedPackage->getType() === 'magento-module') {
             $processExecutor = new ProcessExecutor($event->getIO());
-            $processExecutor->execute(sprintf('modman deploy %s', $installedPackage->getName()));
+            $processExecutor->execute(sprintf('modman deploy %s', static::getModmanName($installedPackage)));
         }
     }
 
@@ -40,7 +41,7 @@ class Script
 
         if ($installedPackage->getType() === 'magento-module') {
             $processExecutor = new ProcessExecutor($event->getIO());
-            $processExecutor->execute(sprintf('modman deploy %s', $installedPackage->getName()));
+            $processExecutor->execute(sprintf('modman deploy %s', static::getModmanName($installedPackage)));
         }
     }
 
@@ -52,12 +53,25 @@ class Script
 
         if ($installedPackage->getType() === 'magento-module') {
             $processExecutor = new ProcessExecutor($event->getIO());
-            $processExecutor->execute(sprintf('modman undeploy %s', $installedPackage->getName()));
+            $processExecutor->execute(sprintf('modman undeploy %s', static::getModmanName($installedPackage)));
         }
     }
 
     public static function warmCache(Event $event)
     {
         // make cache toasty
+    }
+
+    protected static function getModmanName(PackageInterface $package)
+    {
+        $prettyName = $package->getPrettyName();
+        if (strpos($prettyName, '/') !== false) {
+            list($vendor, $name) = explode('/', $prettyName);
+        } else {
+            $vendor = '';
+            $name = $prettyName;
+        }
+
+        return "{$vendor}_{$name}";
     }
 }
