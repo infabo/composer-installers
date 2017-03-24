@@ -28,7 +28,8 @@
     "class": "Aoepeople\\ComposerInstallers\\Installer"
   },
   "replace": {
-    "magento-hackathon/magento-composer-installer": "*"
+    "magento-hackathon/magento-composer-installer": "*",
+    "firegento/psr0autoloader": "*"
   },
   "require": {
     "colinmollenhour/modman": "dev-master"
