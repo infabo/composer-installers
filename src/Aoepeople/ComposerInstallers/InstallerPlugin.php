@@ -16,10 +16,12 @@ use Composer\DependencyResolver\Operation\InstallOperation;
 use Composer\DependencyResolver\Operation\UpdateOperation;
 use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\Installer\PackageEvent;
+use Composer\Installer\PackageEvents;
 use Composer\IO\IOInterface;
 use Composer\Package\PackageInterface;
 use Composer\Plugin\PluginInterface;
 use Composer\Script\Event;
+use Composer\Script\ScriptEvents;
 use Composer\Util\ProcessExecutor;
 
 class InstallerPlugin implements PluginInterface, EventSubscriberInterface
@@ -30,30 +32,38 @@ class InstallerPlugin implements PluginInterface, EventSubscriberInterface
         $composer->getInstallationManager()->addInstaller($installer);
     }
 
+    /**
+     * @return array The event names to listen to
+     */
     public static function getSubscribedEvents()
     {
         return array(
-            'pre-update-cmd' => array(
-                array('magentoEnableMaintenance'),
+            ScriptEvents::PRE_UPDATE_CMD => array(
+                array('magentoEnableMaintenance', 0),
             ),
-            'post-autoload-dump' => array(
+            ScriptEvents::POST_INSTALL_CMD => array(
                 array('magentoFlushCache'),
                 array('magentoRunSetup'),
-                array('magentoDisableMaintenance'),
+                array('magentoDisableMaintenance')
             ),
-            'post-package-install' => array(
-                array('postPackageInstall')
+            ScriptEvents::POST_UPDATE_CMD => array(
+                array('magentoFlushCache'),
+                array('magentoRunSetup'),
+                array('magentoDisableMaintenance')
             ),
-            'post-package-update' => array(
-                array('postPackageUpdate')
+            PackageEvents::POST_PACKAGE_UPDATE => array(
+                array('postPackageUpdate', 0),
             ),
-            'pre-package-uninstall' => array(
-                array('modmanUndeployPackage')
+            PackageEvents::POST_PACKAGE_UNINSTALL => array(
+                array('modmanUndeployPackage', 0),
+            ),
+            PackageEvents::POST_PACKAGE_INSTALL => array(
+                array('postPackageInstall', 0),
             )
         );
     }
 
-    public static function postPackageInstall(PackageEvent $event)
+    public function postPackageInstall(PackageEvent $event)
     {
         $binDir = $event->getComposer()->getConfig()->get('bin-dir');
 
@@ -63,11 +73,12 @@ class InstallerPlugin implements PluginInterface, EventSubscriberInterface
 
         if ($installedPackage->getType() === 'magento-module') {
             $processExecutor = new ProcessExecutor($event->getIO());
-            $processExecutor->execute(sprintf('%s/modman deploy %s', $binDir, static::getModmanName($installedPackage)));
+            $processExecutor->execute(sprintf('%s/modman deploy %s --copy', $binDir,
+                $this->getModmanName($installedPackage)));
         }
     }
 
-    public static function postPackageUpdate(PackageEvent $event)
+    public function postPackageUpdate(PackageEvent $event)
     {
         $binDir = $event->getComposer()->getConfig()->get('bin-dir');
 
@@ -77,7 +88,8 @@ class InstallerPlugin implements PluginInterface, EventSubscriberInterface
 
         if ($updatedPackage->getType() === 'magento-module') {
             $processExecutor = new ProcessExecutor($event->getIO());
-            $processExecutor->execute(sprintf('%s/modman deploy %s', $binDir, static::getModmanName($updatedPackage)));
+            $processExecutor->execute(sprintf('%s/modman deploy %s --copy', $binDir,
+                $this->getModmanName($updatedPackage)));
         }
     }
 
@@ -97,7 +109,23 @@ class InstallerPlugin implements PluginInterface, EventSubscriberInterface
         $processExecutor->execute($binDir . '/n98-magerun sys:maintenance --off');
     }
 
-    protected static function getModmanName(PackageInterface $package)
+    public function magentoFlushCache(Event $event)
+    {
+        $binDir = $event->getComposer()->getConfig()->get('bin-dir');
+
+        $processExecutor = new ProcessExecutor($event->getIO());
+        $processExecutor->execute($binDir . '/n98-magerun cache:flush');
+    }
+
+    public function magentoRunSetup(Event $event)
+    {
+        $binDir = $event->getComposer()->getConfig()->get('bin-dir');
+
+        $processExecutor = new ProcessExecutor($event->getIO());
+        $processExecutor->execute($binDir . '/n98-magerun sys:setup:run');
+    }
+
+    protected function getModmanName(PackageInterface $package)
     {
         $prettyName = $package->getPrettyName();
         if (strpos($prettyName, '/') !== false) {
