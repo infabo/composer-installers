@@ -20,18 +20,19 @@
   ],
   "autoload": {
     "psr-0": {
-      "Aoepeople\\ComposerInstallers\\": "src/",
-      "Newtown\\Composer\\": "src/"
+      "Aoepeople\\ComposerInstallers": "src/",
+      "Newtown\\Composer": "src/"
     }
   },
   "extra": {
-    "class": "Aoepeople\\ComposerInstallers\\Installer"
+    "class": "Aoepeople\\ComposerInstallers\\InstallerPlugin"
   },
   "replace": {
     "magento-hackathon/magento-composer-installer": "*",
     "firegento/psr0autoloader": "*"
   },
   "require": {
+    "composer-plugin-api": "^1.1",
     "colinmollenhour/modman": "dev-master",
     "roave/security-advisories": "dev-master"
   }

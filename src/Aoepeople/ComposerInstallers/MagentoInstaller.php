@@ -2,6 +2,9 @@
 
 namespace Aoepeople\ComposerInstallers;
 
+use Composer\Composer;
+use Composer\Package\PackageInterface;
+
 class MagentoInstaller extends BaseInstaller
 {
     protected $locations = array(
@@ -9,12 +12,20 @@ class MagentoInstaller extends BaseInstaller
     );
 
     /**
-     * @param array $packageExtra
+     * @param PackageInterface $package
+     * @param Composer $composer
+     *
      * @throws \InvalidArgumentException
      */
-    public function __construct(array $packageExtra)
+    public function __construct(PackageInterface $package = null, Composer $composer = null)
     {
-        parent::__construct();
+        parent::__construct($package, $composer);
+
+        if ($package === null) {
+            return;
+        }
+        
+        $packageExtra = $package->getExtra();
 
         if (isset($packageExtra['magento-core-package-type'])) {
             //merge excludes from root package composer.json file with default excludes
