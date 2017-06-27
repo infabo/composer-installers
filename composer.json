@@ -32,9 +32,10 @@
   },
   "require": {
     "composer-plugin-api": "^1.1",
-    "colinmollenhour/modman": "*",
-    "n98/magerun": "*",
-    "hirak/prestissimo": "*",
     "roave/security-advisories": "dev-master"
-  }
+  },
+  "bin": [
+    "bin/modman",
+    "bin/n98-magerun"
+  ]
 }
