@@ -1,6 +1,6 @@
 {
   "name": "newtown/composer-installers",
-  "type": "composer-installer",
+  "type": "composer-plugin",
   "license": "GPL",
   "description": "A simple composer installer",
   "keywords": [
@@ -32,6 +32,7 @@
     "firegento/psr0autoloader": "*"
   },
   "require": {
-    "colinmollenhour/modman": "dev-master"
+    "colinmollenhour/modman": "dev-master",
+    "roave/security-advisories": "dev-master"
   }
 }

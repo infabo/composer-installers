@@ -10,6 +10,7 @@ class MagentoInstaller extends BaseInstaller
 
     /**
      * @param array $packageExtra
+     * @throws \InvalidArgumentException
      */
     public function __construct(array $packageExtra)
     {
@@ -18,7 +19,7 @@ class MagentoInstaller extends BaseInstaller
         if (isset($packageExtra['magento-core-package-type'])) {
             //merge excludes from root package composer.json file with default excludes
             if (!isset($packageExtra['magento-root-dir'])) {
-                throw new \InvalidArgumentException("magento-root-dir must be specified in root package");
+                throw new \InvalidArgumentException('magento-root-dir must be specified in root package');
             }
 
             $this->locations[$packageExtra['magento-core-package-type']] = rtrim($packageExtra['magento-root-dir'],

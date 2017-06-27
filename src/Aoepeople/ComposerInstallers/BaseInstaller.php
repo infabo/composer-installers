@@ -1,4 +1,5 @@
 <?php
+
 namespace Aoepeople\ComposerInstallers;
 
 use Composer\Composer;
@@ -14,7 +15,7 @@ abstract class BaseInstaller
      * Initializes base installer.
      *
      * @param PackageInterface $package
-     * @param Composer         $composer
+     * @param Composer $composer
      */
     public function __construct(PackageInterface $package = null, Composer $composer = null)
     {
@@ -26,8 +27,9 @@ abstract class BaseInstaller
      * Return the install path based on package type.
      *
      * @param  PackageInterface $package
-     * @param  string           $frameworkType
+     * @param  string $frameworkType
      * @return string
+     * @throws \InvalidArgumentException
      */
     public function getInstallPath(PackageInterface $package, $frameworkType = '')
     {
@@ -91,14 +93,14 @@ abstract class BaseInstaller
      * Replace vars in a path
      *
      * @param  string $path
-     * @param  array  $vars
+     * @param  array $vars
      * @return string
      */
     protected function templatePath($path, array $vars = array())
     {
         if (strpos($path, '{') !== false) {
-            extract($vars);
-            preg_match_all('@\{\$([A-Za-z0-9_]*)\}@i', $path, $matches);
+            extract($vars, EXTR_OVERWRITE);
+            preg_match_all('@\{\$(\w*)\}@i', $path, $matches);
             if (!empty($matches[1])) {
                 foreach ($matches[1] as $var) {
                     $path = str_replace('{$' . $var . '}', $$var, $path);
@@ -112,7 +114,7 @@ abstract class BaseInstaller
     /**
      * Search through a passed paths array for a custom install path.
      *
-     * @param  array  $paths
+     * @param  array $paths
      * @param  string $name
      * @param  string $type
      * @return string
@@ -120,7 +122,7 @@ abstract class BaseInstaller
     protected function mapCustomInstallPaths(array $paths, $name, $type)
     {
         foreach ($paths as $path => $names) {
-            if (in_array($name, $names) || in_array('type:' . $type, $names)) {
+            if (in_array($name, $names, true) || in_array('type:' . $type, $names, true)) {
                 return $path;
             }
         }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Aoepeople\ComposerInstallers;
 
 use Composer\Installer\LibraryInstaller;
@@ -13,11 +14,12 @@ class Installer extends LibraryInstaller
      * @var array
      */
     private $supportedTypes = array(
-        'magento'      => 'MagentoInstaller',
+        'magento' => 'MagentoInstaller',
     );
 
     /**
      * {@inheritDoc}
+     * @throws \InvalidArgumentException
      */
     public function getInstallPath(PackageInterface $package)
     {
@@ -31,7 +33,9 @@ class Installer extends LibraryInstaller
         }
 
         $class = 'Aoepeople\\ComposerInstallers\\' . $this->supportedTypes[$frameworkType];
-        $installer = new $class($package, $this->composer); /* @var $installer \Aoepeople\Installers\BaseInstaller */
+        $installer = new $class($package, $this->composer);
+
+        /* @var $installer \Aoepeople\Installers\BaseInstaller */
 
         return $installer->getInstallPath($package, $frameworkType);
     }
@@ -39,13 +43,14 @@ class Installer extends LibraryInstaller
     public function uninstall(InstalledRepositoryInterface $repo, PackageInterface $package)
     {
         if (!$repo->hasPackage($package)) {
-            throw new \InvalidArgumentException('Package is not installed: '.$package);
+            throw new \InvalidArgumentException('Package is not installed: ' . $package);
         }
 
         $repo->removePackage($package);
 
         $installPath = $this->getInstallPath($package);
-        $this->io->write(sprintf('Deleting %s - %s', $installPath, $this->filesystem->removeDirectory($installPath) ? '<comment>deleted</comment>' : '<error>not deleted</error>'));
+        $this->io->write(sprintf('Deleting %s - %s', $installPath,
+            $this->filesystem->removeDirectory($installPath) ? '<comment>deleted</comment>' : '<error>not deleted</error>'));
     }
 
     /**
@@ -60,6 +65,7 @@ class Installer extends LibraryInstaller
         }
 
         $locationPattern = $this->getLocationPattern($frameworkType);
+
         return preg_match('#' . $frameworkType . '-' . $locationPattern . '#', $packageType, $matches) === 1;
     }
 
@@ -74,7 +80,7 @@ class Installer extends LibraryInstaller
         $frameworkType = false;
 
         foreach ($this->supportedTypes as $key => $val) {
-            if ($key === substr($type, 0, strlen($key))) {
+            if (0 === strpos($type, $key)) {
                 $frameworkType = substr($type, 0, strlen($key));
                 break;
             }
@@ -100,6 +106,7 @@ class Installer extends LibraryInstaller
             $locations = array_keys($framework->getLocations());
             $pattern = $locations ? '(' . implode('|', $locations) . ')' : false;
         }
-        return $pattern ? : '(\w+)';
+
+        return $pattern ?: '(\w+)';
     }
 }
