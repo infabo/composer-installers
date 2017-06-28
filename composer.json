@@ -31,6 +31,7 @@
     "firegento/psr0autoloader": "*"
   },
   "require": {
+    "ecomdev/composer_autoload": "dev-master",
     "composer-plugin-api": "^1.1",
     "roave/security-advisories": "dev-master"
   },
