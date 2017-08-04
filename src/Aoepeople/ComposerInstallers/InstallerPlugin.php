@@ -73,7 +73,7 @@ class InstallerPlugin implements PluginInterface, EventSubscriberInterface
 
         if ($installedPackage->getType() === 'magento-module') {
             $processExecutor = new ProcessExecutor($event->getIO());
-            $processExecutor->execute(sprintf('%s/modman deploy %s', $binDir,
+            $processExecutor->execute(sprintf('%s/modman deploy %s --copy', $binDir,
                 $this->getModmanName($installedPackage)));
         }
     }
@@ -88,7 +88,22 @@ class InstallerPlugin implements PluginInterface, EventSubscriberInterface
 
         if ($updatedPackage->getType() === 'magento-module') {
             $processExecutor = new ProcessExecutor($event->getIO());
-            $processExecutor->execute(sprintf('%s/modman deploy %s', $binDir,
+            $processExecutor->execute(sprintf('%s/modman deploy %s --copy', $binDir,
+                $this->getModmanName($updatedPackage)));
+        }
+    }
+
+    public function modmanUndeployPackage(PackageEvent $event)
+    {
+        $binDir = $event->getComposer()->getConfig()->get('bin-dir');
+
+        /** @var UpdateOperation $operation */
+        $operation = $event->getOperation();
+        $updatedPackage = $operation->getTargetPackage();
+
+        if ($updatedPackage->getType() === 'magento-module') {
+            $processExecutor = new ProcessExecutor($event->getIO());
+            $processExecutor->execute(sprintf('%s/modman undeploy %s', $binDir,
                 $this->getModmanName($updatedPackage)));
         }
     }
