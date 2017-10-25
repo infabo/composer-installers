@@ -38,9 +38,7 @@ class InstallerPlugin implements PluginInterface, EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            ScriptEvents::PRE_UPDATE_CMD => array(
-                array('magentoEnableMaintenance', 0),
-            ),
+            ScriptEvents::PRE_UPDATE_CMD => 'magentoEnableMaintenance',
             ScriptEvents::POST_INSTALL_CMD => array(
                 array('magentoFlushCache'),
                 array('magentoRunSetup'),
@@ -51,15 +49,9 @@ class InstallerPlugin implements PluginInterface, EventSubscriberInterface
                 array('magentoRunSetup'),
                 array('magentoDisableMaintenance')
             ),
-            PackageEvents::POST_PACKAGE_UPDATE => array(
-                array('postPackageUpdate', 0),
-            ),
-            PackageEvents::POST_PACKAGE_UNINSTALL => array(
-                array('modmanUndeployPackage', 0),
-            ),
-            PackageEvents::POST_PACKAGE_INSTALL => array(
-                array('postPackageInstall', 0),
-            )
+            PackageEvents::POST_PACKAGE_UPDATE => 'postPackageUpdate',
+            PackageEvents::POST_PACKAGE_UNINSTALL => 'modmanUndeployPackage',
+            PackageEvents::POST_PACKAGE_INSTALL => 'postPackageInstall'
         );
     }
 
